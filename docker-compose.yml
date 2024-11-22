@@ -12,7 +12,7 @@ services:
             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./:/app
-      - my_media:/files/media
+      - my_media:/app/media
     depends_on:
       - db
   db:
