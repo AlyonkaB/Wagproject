@@ -44,10 +44,14 @@ COPY --chown=wagtail:wagtail . .
 
 # Use user "wagtail" to run the build commands below and the server itself.
 USER wagtail
+ENV DJANGO_SETTINGS_MODULE=wagproject.settings.dev
 
+RUN mkdir -p /app/staticfiles /app/media && chown wagtail:wagtail /app/staticfiles /app/media
 # Collect static files.
-RUN python manage.py collectstatic --noinput --clear
-
+#RUN python manage.py collectstatic --noinput --clear
+#RUN apt-get update && apt-get install -y \
+#    libpq-dev \
+#    && pip install psycopg2-binary
 # Runtime command that executes when "docker run" is called, it does the
 # following:
 #   1. Migrate the database.
@@ -57,4 +61,4 @@ RUN python manage.py collectstatic --noinput --clear
 #   PRACTICE. The database should be migrated manually or using the release
 #   phase facilities of your hosting platform. This is used only so the
 #   Wagtail instance can be started with a simple "docker run" command.
-CMD set -xe; python manage.py migrate --noinput; gunicorn wagproject.wsgi:application
+CMD set -xe; python manage.py migrate --noinput; python manage.py collectstatic --noinput --clear; gunicorn wagproject.wsgi:application
